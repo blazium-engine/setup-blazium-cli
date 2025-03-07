@@ -59,4 +59,5 @@ runs:
     - name: Verify Blazium CLI Installation
       shell: bash
       run: |
+        blazium-cli --version
         ${{ env.BLAZIUM_CLI }} --version
