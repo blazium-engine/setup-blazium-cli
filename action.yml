@@ -54,7 +54,7 @@ runs:
         chmod +x $BLAZIUM_CLI
         echo "BLAZIUM_CLI=$BLAZIUM_CLI" >> $GITHUB_ENV
         # Add Blazium CLI to PATH
-        echo "$BLAZIUM_CLI" >> $GITHUB_PATH
+        echo "${{ inputs.downloads-path }}/cli" >> $GITHUB_PATH
 
     - name: Verify Blazium CLI Installation
       shell: bash
