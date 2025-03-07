@@ -1,0 +1,38 @@
+name: Test Download Blazium CLI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [{
+          name: ubuntu-latest,
+          platform: linux
+          }, {
+          name: macos-latest,
+          platform: macos
+          }, { 
+          name: windows-latest,
+          platform: windows
+          }]
+    runs-on: ${{ matrix.os.name }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: blazium-engine/setup-blazium-cli@master
+        name: 🤖 Setup Blazium CLI
+        with:
+          version: 0.0.14
+
+      - name: 🔬 Verify CLI
+        run: |
+          blazium-cli --version

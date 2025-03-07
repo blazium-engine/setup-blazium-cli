@@ -1,0 +1,62 @@
+name: 'Blazium Setup CLI'
+
+description: 'Setup Blazium CLI for use with macOS, Windows, and Linux CI/CD runners.'
+
+author: 'blazium-engine'
+branding:
+  icon: 'hard-drive'
+  color: 'white'
+inputs:
+  cli-version:
+    description: 'Blazium CLI version: e.g., 0.0.13, 0.0.14, etc. Must include major, minor, and patch.'
+    required: true
+  downloads-path:
+    description: 'Path to download Blazium CLI to, relative to the current working directory of the action.'
+    default: 'downloads'
+  bin-path:
+    description: 'Path for binaries to be installed to, relative to the current working directory of the action. This is the path that will be added to the system path.'
+    default: 'bin'
+
+runs:
+  using: composite
+  steps:
+    - name: Cache Blazium CLI
+      id: cache-blazium-cli
+      uses: actions/cache@v3
+      with:
+        path: ${{ inputs.downloads-path }}/cli
+        key: ${{ runner.os }}-blazium-cli-${{ inputs.cli-version }}
+    - name: Download Blazium CLI
+      shell: bash
+      run: |
+        echo "Runner os is ${{ runner.os }}"
+        if [ "${{ runner.os }}" == "Linux" ]; then
+          os="linux"
+        elif [ "${{ runner.os }}" == "Windows" ]; then
+          os="windows"
+        else
+          os="darwin"
+        fi
+        mkdir -p ${{ inputs.downloads-path }}/cli
+        if [ "${{ steps.cache-blazium-cli.outputs.cache-hit }}" != "true" ]; then
+          # If os is windows, use .exe
+          if [ "$os" == "windows" ]; then
+            curl -L -o ${{ inputs.downloads-path }}/cli/blazium-cli.exe https://cdn.blazium.app/cli/$os/${{ inputs.cli-version }}/blazium-cli.exe
+          else
+            curl -L -o ${{ inputs.downloads-path }}/cli/blazium-cli https://cdn.blazium.app/cli/$os/${{ inputs.cli-version }}/blazium-cli
+          fi
+        else
+          echo "Using cached Blazium CLI"
+          ls ${{ inputs.downloads-path }}/cli
+        fi
+        file=$(ls ${{ inputs.downloads-path }}/cli)
+        BLAZIUM_CLI=${{ inputs.downloads-path }}/cli/$file
+        chmod +x $BLAZIUM_CLI
+        echo "BLAZIUM_CLI=$BLAZIUM_CLI" >> $GITHUB_ENV
+        # Add Blazium CLI to PATH
+        echo "$BLAZIUM_CLI" >> $GITHUB_PATH
+
+    - name: Verify Blazium CLI Installation
+      shell: bash
+      run: |
+        ${{ env.BLAZIUM_CLI }} --version
