@@ -13,9 +13,6 @@ inputs:
   downloads-path:
     description: 'Path to download Blazium CLI to, relative to the current working directory of the action.'
     default: 'downloads'
-  bin-path:
-    description: 'Path for binaries to be installed to, relative to the current working directory of the action. This is the path that will be added to the system path.'
-    default: 'bin'
 
 runs:
   using: composite
