@@ -9,7 +9,7 @@ branding:
 inputs:
   version:
     description: 'Blazium CLI version: e.g., 0.0.13, 0.0.14, etc. Must include major, minor, and patch.'
-    required: true
+    default: 0.0.14
   downloads-path:
     description: 'Path to download Blazium CLI to, relative to the current working directory of the action.'
     default: 'downloads'
